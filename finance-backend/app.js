@@ -1,6 +1,7 @@
 import express from "express";
 import authRoutes from "./src/routes/auth.routes.js";
 import userRoutes from "./src/routes/user.routes.js";
+import transactionRoutes from "./src/routes/transaction.routes.js";
 import globalErrorHandler from "./src/middleware/errorHandler.js";
 import AppError from "./src/utils/appError.js";
 
@@ -21,6 +22,7 @@ app.get("/api", (req, res) => {
 // API routes
 app.use("/api/v1/finance-backend/auth", authRoutes);
 app.use("/api/v1/finance-backend/users", userRoutes);
+app.use("/api/v1/finance-backend/transactions", transactionRoutes);
 
 // 404 handler — must come after all routes
 app.all("/{*any}", (req, res, next) => {
