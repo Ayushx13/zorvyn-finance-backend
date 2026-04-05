@@ -3,6 +3,8 @@ import authRoutes from "./src/routes/auth.routes.js";
 import userRoutes from "./src/routes/user.routes.js";
 import transactionRoutes from "./src/routes/transaction.routes.js";
 import dashboardRoutes from "./src/routes/dashboard.routes.js";
+import budgetRoutes from "./src/routes/budget.routes.js";
+import auditRoutes from "./src/routes/audit.routes.js";
 import globalErrorHandler from "./src/middleware/errorHandler.js";
 import AppError from "./src/utils/appError.js";
 
@@ -25,6 +27,8 @@ app.use("/api/v1/finance-backend/auth", authRoutes);
 app.use("/api/v1/finance-backend/users", userRoutes);
 app.use("/api/v1/finance-backend/transactions", transactionRoutes);
 app.use("/api/v1/finance-backend/dashboard", dashboardRoutes);
+app.use("/api/v1/finance-backend/budgets", budgetRoutes);
+app.use("/api/v1/finance-backend/audit", auditRoutes);
 
 // 404 handler — must come after all routes
 app.all("/{*any}", (req, res, next) => {
