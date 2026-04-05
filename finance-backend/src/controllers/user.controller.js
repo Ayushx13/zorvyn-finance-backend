@@ -1,10 +1,11 @@
 import catchAsync from "../utils/catchAsync.js";
 import * as userService from "../services/user.service.js";
 
-/**
- * GET /api/users
- * Admin only — list all users (paginated).
- */
+
+
+// @desc    Get all users
+// @route   GET /api/v1/finance-backend/users
+// @access  Private/Admin
 export const getUsers = catchAsync(async (req, res, next) => {
   const result = await userService.getAllUsers(req.query);
 
@@ -14,10 +15,11 @@ export const getUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-/**
- * PATCH /api/users/:id/role
- * Admin only — update a user's role.
- */
+
+
+// @desc    Update a user's role
+// @route   PATCH /api/v1/finance-backend/users/:id/role
+// @access  Private/Admin
 export const updateRole = catchAsync(async (req, res, next) => {
   const { role } = req.body;
   const user = await userService.updateRole(req.params.id, role);
@@ -28,10 +30,12 @@ export const updateRole = catchAsync(async (req, res, next) => {
   });
 });
 
-/**
- * PATCH /api/users/:id/status
- * Admin only — activate or deactivate a user.
- */
+
+
+
+// @desc    Activate or deactivate a user
+// @route   PATCH /api/v1/finance-backend/users/:id/status
+// @access  Private/Admin
 export const updateStatus = catchAsync(async (req, res, next) => {
   const { isActive } = req.body;
   const user = await userService.updateStatus(req.params.id, isActive);
