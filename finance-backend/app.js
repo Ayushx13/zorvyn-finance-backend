@@ -1,22 +1,33 @@
-import express from 'express';
+import express from "express";
+import authRoutes from "./src/routes/auth.routes.js";
+import userRoutes from "./src/routes/user.routes.js";
+import globalErrorHandler from "./src/middleware/errorHandler.js";
+import AppError from "./src/utils/appError.js";
 
 const app = express();
 
+// Body parser
+app.use(express.json({ limit: "10kb" }));
 
-app.get('/api' , (req,res) =>{
-    res.json({
-        message: "Hello From Finance Backend API",
-        status: "running",
-        timestamp: new Date().toISOString()
-    })
+// Health check
+app.get("/api", (req, res) => {
+  res.json({
+    message: "Hello From Finance Backend API",
+    status: "running",
+    timestamp: new Date().toISOString(),
+  });
 });
 
+// API routes
+app.use("/api/v1/finance-backend/auth", authRoutes);
+app.use("/api/v1/finance-backend/users", userRoutes);
 
-
-
-// 404 handler
-app.all('/{*any}', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!!`, 404));
+// 404 handler — must come after all routes
+app.all("/{*any}", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-export {app};
+// Global error handler
+app.use(globalErrorHandler);
+
+export { app };
