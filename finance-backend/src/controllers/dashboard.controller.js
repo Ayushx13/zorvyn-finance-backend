@@ -67,6 +67,6 @@ export const getBudgetAlerts = catchAsync(async (req, res) => {
 
   res.status(200).json({
     status: "success",
-    data: { alerts: result },
+    data: result,
   });
 });
