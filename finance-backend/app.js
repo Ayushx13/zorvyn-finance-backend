@@ -12,4 +12,11 @@ app.get('/api' , (req,res) =>{
 });
 
 
+
+
+// 404 handler
+app.all('/{*any}', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!!`, 404));
+});
+
 export {app};
