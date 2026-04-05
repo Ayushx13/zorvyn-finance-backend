@@ -144,6 +144,7 @@ export const getBudgetAlerts = async () => {
         category: budget.category,
         monthlyLimit: budget.monthlyLimit,
         spent,
+        exceeded: true,
         exceededBy: spent - budget.monthlyLimit,
       };
     });
