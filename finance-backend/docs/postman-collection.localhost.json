@@ -12,19 +12,19 @@
       "name": "0. Health Check",
       "item": [
         {
-          "name": "GET /api — server running",
+          "name": "GET /healthz - server running",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:7500/api",
+              "raw": "http://localhost:7500/healthz",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "7500",
               "path": [
-                "api"
+                "healthz"
               ]
             }
           },

@@ -12,12 +12,12 @@
       "name": "0. Health Check",
       "item": [
         {
-          "name": "GET /api — server running",
+          "name": "GET /healthz - server running",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://zorvyn-finance-backend-29i4.onrender.com/api",
+              "raw": "https://zorvyn-finance-backend-29i4.onrender.com/healthz",
               "protocol": "https",
               "host": [
                 "zorvyn-finance-backend-29i4",
@@ -25,7 +25,7 @@
                 "com"
               ],
               "path": [
-                "api"
+                "healthz"
               ]
             }
           },

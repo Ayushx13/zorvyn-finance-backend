@@ -121,6 +121,8 @@ finance-backend/
 ## API Reference
 Base URL: `/api/v1/finance-backend`
 
+Health check: `GET /healthz`
+
 ### Auth
 | Method | Endpoint | Description | Access |
 |---|---|---|---|
@@ -307,5 +309,7 @@ Collection variables auto-capture tokens and IDs from test scripts.
 
 ## Live Demo
 Base URL: `https://zorvyn-finance-backend-29i4.onrender.com/api/v1/finance-backend`
+
+Health check: `https://zorvyn-finance-backend-29i4.onrender.com/healthz`
 
 Note: deployed on Render free tier, may take 30-50 seconds to cold start.
