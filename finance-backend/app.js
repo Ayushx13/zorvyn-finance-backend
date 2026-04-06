@@ -7,14 +7,22 @@ import budgetRoutes from "./src/routes/budget.routes.js";
 import auditRoutes from "./src/routes/audit.routes.js";
 import globalErrorHandler from "./src/middleware/errorHandler.js";
 import AppError from "./src/utils/appError.js";
+import morgan from 'morgan';
 
 const app = express();
 
 // Body parser
 app.use(express.json({ limit: "10kb" }));
 
+console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+
+// Development logging
+if ((process.env.NODE_ENV || "").trim() === "development") {
+    app.use(morgan('dev'));
+}
+
 // Health check
-app.get("/api", (req, res) => {
+app.get("/healthz", (req, res) => {
   res.json({
     message: "Hello From Finance Backend API",
     status: "running",
