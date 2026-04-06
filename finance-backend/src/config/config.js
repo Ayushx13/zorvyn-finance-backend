@@ -1,3 +1,6 @@
-import dotenv from 'dotenv';
+import { existsSync } from "fs";
+import dotenv from "dotenv";
 
-dotenv.config({ path: './config.env', debug: true });
+const envPath = existsSync(".env") ? ".env" : "./config.env";
+
+dotenv.config({ path: envPath });
