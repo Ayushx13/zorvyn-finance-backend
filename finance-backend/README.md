@@ -89,7 +89,8 @@ finance-backend/
 │   ├── transaction.test.js              # Transaction integration tests
 │   └── dashboard.test.js                # Dashboard integration tests
 ├── docs/
-│   └── postman-collection.json        # Postman collection
+│   ├── postman-collection.json                  # Render/deployed Postman collection
+│   └── postman-collection.localhost.json        # Localhost Postman collection
 ├── .env.example
 ├── README.md
 ├── app.js                               # Express app composition
@@ -295,7 +296,10 @@ Tradeoff: The enum must stay in sync with model names.
 - CSV export builds in memory — streaming approach better for large datasets, not implemented for simplicity
 
 ## API Testing
-A Postman collection is included at `docs/postman-collection.json`.
+Postman collections are included at:
+
+- `docs/postman-collection.json` for the deployed Render API
+- `docs/postman-collection.localhost.json` for local development on `http://localhost:7500`
 
 It covers all routes, all three roles, and edge cases (`403`, `401`, `400`, `404`, `409`).
 
