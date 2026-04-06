@@ -17,12 +17,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:7500/api",
-              "protocol": "http",
+              "raw": "https://zorvyn-finance-backend-29i4.onrender.com/api",
+              "protocol": "https",
               "host": [
-                "localhost"
+                "zorvyn-finance-backend-29i4",
+                "onrender",
+                "com"
               ],
-              "port": "7500",
               "path": [
                 "api"
               ]
@@ -2633,7 +2634,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:7500/api/v1/finance-backend"
+      "value": "https://zorvyn-finance-backend-29i4.onrender.com/api/v1/finance-backend"
     },
     {
       "key": "adminToken",

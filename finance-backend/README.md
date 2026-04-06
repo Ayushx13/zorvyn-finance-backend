@@ -302,6 +302,6 @@ It covers all routes, all three roles, and edge cases (`403`, `401`, `400`, `404
 Collection variables auto-capture tokens and IDs from test scripts.
 
 ## Live Demo
-Base URL: `https://your-render-url.onrender.com/api/v1/finance-backend`
+Base URL: `https://zorvyn-finance-backend-29i4.onrender.com/api/v1/finance-backend`
 
 Note: deployed on Render free tier, may take 30-50 seconds to cold start.
