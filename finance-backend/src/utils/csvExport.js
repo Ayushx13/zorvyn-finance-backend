@@ -1,10 +1,12 @@
+import { normalizeStoredMoney } from "./money.js";
+
 // Serializes an array of transaction objects to a CSV string
 const csvExport = (transactions) => {
     const headers = ["ID", "Amount", "Type", "Category", "Date", "Description", "Tags", "Created By", "Created At"];
 
     const rows = transactions.map((t) => [
         t._id,
-        t.amount,
+        normalizeStoredMoney(t.amount, t.amountStorageFormat),
         t.type,
         t.category,
         t.date ? new Date(t.date).toISOString().split("T")[0] : "",
