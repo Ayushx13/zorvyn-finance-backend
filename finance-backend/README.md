@@ -85,9 +85,13 @@ finance-backend/
 │   │   ├── auth.js                      # Test auth helpers
 │   │   ├── db.js                        # mongodb-memory-server setup/teardown
 │   │   └── seed.js                      # Seed users and test data helpers
+│   ├── health.test.js                   # Health check endpoint test
 │   ├── auth.test.js                     # Auth integration tests
+│   ├── user.test.js                     # User management integration tests
 │   ├── transaction.test.js              # Transaction integration tests
-│   └── dashboard.test.js                # Dashboard integration tests
+│   ├── dashboard.test.js                # Dashboard analytics integration tests
+│   ├── budget.test.js                   # Budget management integration tests
+│   └── audit.test.js                    # Audit logging integration tests
 ├── docs/
 │   ├── postman-collection.json                  # Render/deployed Postman collection
 │   └── postman-collection.localhost.json        # Localhost Postman collection
@@ -218,7 +222,14 @@ The server defaults to `http://localhost:7500`.
 npm test
 ```
 
-The test suite currently has 3 suites and 22 passing tests.
+The test suite covers all API endpoints with **80 tests across 7 suites**:
+- `health.test.js` (1 test): Health check endpoint
+- `auth.test.js` (13 tests): Registration, login, profile retrieval
+- `user.test.js` (8 tests): User listing, role updates, status management
+- `transaction.test.js` (23 tests): CRUD, filtering, pagination, CSV export, decimal precision
+- `dashboard.test.js` (17 tests): Summary, trends, category breakdown, budget alerts, legacy data handling
+- `budget.test.js` (9 tests): Budget creation, updates, deletion, duplicate prevention
+- `audit.test.js` (6 tests): Audit log retrieval, action/entity filtering
 
 Tests use `mongodb-memory-server`, so no live database is required.
 
