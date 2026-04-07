@@ -1,5 +1,14 @@
 import Transaction from "../models/Transaction.js";
 import Budget from "../models/Budget.js";
+import { MONEY_SCALE, fromStoredMoney, normalizeStoredMoney, toStoredMoney } from "../utils/money.js";
+
+const storedTransactionAmount = {
+  $cond: [
+    { $eq: ["$amountStorageFormat", "minor"] },
+    "$amount",
+    { $round: [{ $multiply: ["$amount", MONEY_SCALE] }, 0] },
+  ],
+};
 
 
 
@@ -24,22 +33,21 @@ export const getSummary = async ({ year, month } = {}) => {
     {
       $group: {
         _id: null,
-        totalIncome: { $sum: { $cond: [{ $eq: ["$type", "income"] }, "$amount", 0] } },
-        totalExpenses: { $sum: { $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0] } },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        totalIncome: 1,
-        totalExpenses: 1,
-        netBalance: { $subtract: ["$totalIncome", "$totalExpenses"] },
+        totalIncome: { $sum: { $cond: [{ $eq: ["$type", "income"] }, storedTransactionAmount, 0] } },
+        totalExpenses: { $sum: { $cond: [{ $eq: ["$type", "expense"] }, storedTransactionAmount, 0] } },
       },
     },
   ];
 
   const [result] = await Transaction.aggregate(pipeline);
-  return result ?? { totalIncome: 0, totalExpenses: 0, netBalance: 0 };
+  const totalIncome = fromStoredMoney(result?.totalIncome ?? 0);
+  const totalExpenses = fromStoredMoney(result?.totalExpenses ?? 0);
+
+  return {
+    totalIncome,
+    totalExpenses,
+    netBalance: Number((totalIncome - totalExpenses).toFixed(2)),
+  };
 };
 
 
@@ -57,8 +65,8 @@ export const getTrends = async ({ months = 6 } = {}) => {
     {
       $group: {
         _id: { $dateToString: { format: "%Y-%m", date: "$date" } },
-        income: { $sum: { $cond: [{ $eq: ["$type", "income"] }, "$amount", 0] } },
-        expenses: { $sum: { $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0] } },
+        income: { $sum: { $cond: [{ $eq: ["$type", "income"] }, storedTransactionAmount, 0] } },
+        expenses: { $sum: { $cond: [{ $eq: ["$type", "expense"] }, storedTransactionAmount, 0] } },
       },
     },
     {
@@ -72,7 +80,13 @@ export const getTrends = async ({ months = 6 } = {}) => {
     { $sort: { month: 1 } },
   ];
 
-  return await Transaction.aggregate(pipeline);
+  const trends = await Transaction.aggregate(pipeline);
+
+  return trends.map((trend) => ({
+    ...trend,
+    income: fromStoredMoney(trend.income),
+    expenses: fromStoredMoney(trend.expenses),
+  }));
 };
 
 
@@ -84,7 +98,7 @@ export const getCategoryBreakdown = async () => {
     {
       $group: {
         _id: "$category",
-        total: { $sum: "$amount" },
+        total: { $sum: storedTransactionAmount },
       },
     },
     { $sort: { total: -1 } },
@@ -97,7 +111,12 @@ export const getCategoryBreakdown = async () => {
     },
   ];
 
-  return await Transaction.aggregate(pipeline);
+  const breakdown = await Transaction.aggregate(pipeline);
+
+  return breakdown.map((entry) => ({
+    ...entry,
+    total: fromStoredMoney(entry.total),
+  }));
 };
 
 
@@ -127,7 +146,7 @@ export const getBudgetAlerts = async () => {
     {
       $group: {
         _id: "$category",
-        totalExpenses: { $sum: "$amount" },
+        totalExpenses: { $sum: storedTransactionAmount },
       },
     },
   ]);
@@ -137,15 +156,25 @@ export const getBudgetAlerts = async () => {
   );
 
   return budgets
-    .filter((budget) => (expensesMap[budget.category] || 0) > budget.monthlyLimit)
+    .filter((budget) => {
+      const budgetLimit = budget.monthlyLimitStorageFormat === "minor"
+        ? budget.monthlyLimit
+        : toStoredMoney(budget.monthlyLimit);
+
+      return (expensesMap[budget.category] || 0) > budgetLimit;
+    })
     .map((budget) => {
       const spent = expensesMap[budget.category] || 0;
+      const budgetLimit = budget.monthlyLimitStorageFormat === "minor"
+        ? budget.monthlyLimit
+        : toStoredMoney(budget.monthlyLimit);
+
       return {
         category: budget.category,
-        monthlyLimit: budget.monthlyLimit,
-        spent,
+        monthlyLimit: normalizeStoredMoney(budget.monthlyLimit, budget.monthlyLimitStorageFormat),
+        spent: fromStoredMoney(spent),
         exceeded: true,
-        exceededBy: spent - budget.monthlyLimit,
+        exceededBy: fromStoredMoney(spent - budgetLimit),
       };
     });
 };

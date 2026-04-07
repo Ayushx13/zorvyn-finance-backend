@@ -106,10 +106,11 @@ export const softDeleteTransaction = async (id, userId) => {
 
 // Export filtered transactions to CSV
 export const exportToCsv = async (query) => {
-    const filter = buildFilter(query);
-    const transactions = await Transaction.find(filter)
+  const filter = buildFilter(query);
+  const transactions = await Transaction.find(filter)
         .sort({ date: -1 })
-        .populate("createdBy", "name email");
+        .populate("createdBy", "name email")
+        .lean();
 
-    return csvExport(transactions);
+  return csvExport(transactions);
 };
