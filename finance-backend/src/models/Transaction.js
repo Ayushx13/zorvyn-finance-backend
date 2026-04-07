@@ -1,15 +1,37 @@
 import mongoose from "mongoose";
+import { normalizeStoredMoney, toStoredMoney } from "../utils/money.js";
 
 const { Schema, model, models } = mongoose;
 
 const TRANSACTION_TYPES = ["income", "expense"];
+const STORAGE_FORMATS = ["major", "minor"];
+
+const stripInternalMoneyFields = (_doc, ret) => {
+    ret.amount = normalizeStoredMoney(ret.amount, ret.amountStorageFormat);
+    delete ret.amountStorageFormat;
+    return ret;
+};
+
+const setAmount = function (value) {
+    if (value === null || value === undefined || value === "") {
+        return value;
+    }
+
+    this.amountStorageFormat = "minor";
+    return toStoredMoney(value);
+};
 
 const transactionSchema = new Schema(
     {
         amount: {
             type: Number,
             required: [true, "Amount is required"],
-            min: [0.01, "Amount must be greater than 0"],
+            min: [1, "Amount must be greater than 0"],
+            set: setAmount,
+        },
+        amountStorageFormat: {
+            type: String,
+            enum: STORAGE_FORMATS,
         },
         type: {
             type: String,
@@ -52,6 +74,12 @@ const transactionSchema = new Schema(
     {
         timestamps: true,
         versionKey: false,
+        toJSON: {
+            transform: stripInternalMoneyFields,
+        },
+        toObject: {
+            transform: stripInternalMoneyFields,
+        },
     }
 );
 
