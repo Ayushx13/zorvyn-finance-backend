@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { hasAtMostTwoDecimalPlaces } from "../../utils/money.js";
 
 export const createBudgetRules = [
     body("category")
@@ -8,7 +9,11 @@ export const createBudgetRules = [
 
     body("monthlyLimit")
         .notEmpty().withMessage("Monthly limit is required")
-        .isFloat({ min: 0 }).withMessage("Monthly limit cannot be negative"),
+        .bail()
+        .isFloat({ min: 0 }).withMessage("Monthly limit cannot be negative")
+        .bail()
+        .custom(hasAtMostTwoDecimalPlaces).withMessage("Monthly limit can have at most 2 decimal places")
+        .toFloat(),
 ];
 
 export const updateBudgetRules = [
@@ -20,5 +25,8 @@ export const updateBudgetRules = [
 
     body("monthlyLimit")
         .optional()
-        .isFloat({ min: 0 }).withMessage("Monthly limit cannot be negative"),
+        .isFloat({ min: 0 }).withMessage("Monthly limit cannot be negative")
+        .bail()
+        .custom(hasAtMostTwoDecimalPlaces).withMessage("Monthly limit can have at most 2 decimal places")
+        .toFloat(),
 ];

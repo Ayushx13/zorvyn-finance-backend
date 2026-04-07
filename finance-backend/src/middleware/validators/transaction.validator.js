@@ -1,11 +1,16 @@
 import { body } from "express-validator";
 import { TRANSACTION_TYPES } from "../../models/Transaction.js";
+import { hasAtMostTwoDecimalPlaces } from "../../utils/money.js";
 
 
 export const createTransactionRules = [
     body("amount")
         .notEmpty().withMessage("Amount is required")
-        .isFloat({ min: 0.01 }).withMessage("Amount must be greater than 0"),
+        .bail()
+        .isFloat({ min: 0.01 }).withMessage("Amount must be greater than 0")
+        .bail()
+        .custom(hasAtMostTwoDecimalPlaces).withMessage("Amount can have at most 2 decimal places")
+        .toFloat(),
 
     body("type")
         .trim()
@@ -39,7 +44,10 @@ export const createTransactionRules = [
 export const updateTransactionRules = [
     body("amount")
         .optional()
-        .isFloat({ min: 0.01 }).withMessage("Amount must be greater than 0"),
+        .isFloat({ min: 0.01 }).withMessage("Amount must be greater than 0")
+        .bail()
+        .custom(hasAtMostTwoDecimalPlaces).withMessage("Amount can have at most 2 decimal places")
+        .toFloat(),
 
     body("type")
         .optional()
